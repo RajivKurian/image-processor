@@ -1,4 +1,6 @@
 image-processor
 ===============
 
-Ideas for an image processing server
+An Image processing server.
+
+**Status:**  Just in the ideas phase now. No real code.
