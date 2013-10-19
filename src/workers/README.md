@@ -9,4 +9,4 @@ Used to do the actual image processing work.
 
 Future improvements/investigation:
 
-1.  Consider the GPU as yet another worker thread. Build data structures for queueing between cpu producers and gpu consumers. Use cuda streams, atomics and barriers as building-blocks. The memory-model of the GPU is different.
+1.  Consider the GPU as yet another worker. Build data structures for queueing between cpu producers and gpu consumers. Use cuda streams, atomics and barriers as building-blocksfor the implementation.
