@@ -2,6 +2,7 @@ Producers
 ===========
 
 Producers produce the workload for the image-processor worker-threads. In general producer work-flow looks like this:
+
 1.  Parse requests ensuring they are correctly formed.
 2.  Break a request into possible parallel requests.
 3.  Assign requests to worker threads using a ring-buffer.
