@@ -14,7 +14,7 @@ The protocol needs to support:
 3.  Creating a pipeline by composing these stages.
 4.  Run an image through a pipeline.
 
-**Implementation: **
+Implementation:
 =================
 
 Use a length prefixed protocol so that appropriate contiguous buffers can be allocated to hold an entire request. For eg:
