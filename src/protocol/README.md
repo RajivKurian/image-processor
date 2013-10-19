@@ -19,9 +19,8 @@ Implementation:
 
 Use a length prefixed protocol so that appropriate contiguous buffers can be allocated to hold an entire request. For eg:
 
-Length of request| Request
-
-<----4 bytes---->| length * bytes
+ Length of request| Request
+ <----4 bytes---->| length * bytes
 
 This will allow us to:
 	1.  Read the first 4 bytes (provided we get to read at least 4) of a request into a stack allocated buffer. This will give us the length of the following request.
