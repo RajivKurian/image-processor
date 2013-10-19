@@ -4,6 +4,7 @@ Protocol
 **A few concepts:**
 
 **Stage:** A stage is a discrete image processing operation. For example blurring or resizing.
+
 **Pipeline:** A pipeline is a composition of stages. For example blur an image then resize it to a given dimension. Stages in a pipeline are either parallel (independent) or serial (depend on each other).
 
 The protocol needs to support:
