@@ -1,7 +1,7 @@
 Workers
 =======
 
-Used to do the actual image processing code.
+Used to do the actual image processing work.
 
 1.  Runs one or more serial image-processing stages. The output of one stage is the input to the other.
 2.  Use [Halide](https://github.com/halide/Halide) for the image-processing kernels.
