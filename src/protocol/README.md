@@ -25,7 +25,7 @@ Length of request| Request
 
 This will allow us to:
 
-	1.  Read the first 4 bytes (provided we get to read at least 4) of a request into a stack allocated buffer. This will give us the length of the following request.
-	2.  Once we know the length we can pick an appropriately sized free buffer to hold the request.
+1.  Read the first 4 bytes (provided we get to read at least 4) of a request into a stack allocated buffer. This will give us the length of the following request.
+2.  Once we know the length we can pick an appropriately sized free buffer to hold the request.
 
 Draw inspiration from the Redis protocol.
