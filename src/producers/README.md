@@ -11,7 +11,7 @@ Producers produce the workload for the image-processor worker-threads. In genera
 
 Producers in order of priority of completion:
 
-1.  **Network producers::**
+1.  **Network producers:**
 	1.  Multiplex client connections using epoll/kqueue. No other backends will be supported for now. Epoll is first priority since I do not have a OS X/ BSD system.
 	2.  Aggregator will write responses to the client sockets.
 
