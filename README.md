@@ -8,12 +8,18 @@ A multi-threaded image processing application that:
 
 Building
 -------
-1.  Make sure you have cmake. apt-get (debian) and port(OS X) both have repos.
-2.  Check out the project.
-3.  Navigate to the folder and create a build folder say "build".
-4. Navigate to the build folder.
-5.  Run: cmake ../src
-6. Run: make
+  Make sure you have cmake. apt-get (debian) and port(OS X) both have repos.
+
+    git clone https://github.com/RajivKurian/image-processor.git
+    cd image-processor
+    mkdir build
+    cd build
+    cmake ../src
+    make
+
+If you need Eclipse CDT files do something like:
+
+cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_ECLIPSE_VERSION=4.3 ../src 
 
 **Status:**  Just in the ideas phase now. Minimal real code.
 
