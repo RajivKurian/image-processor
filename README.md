@@ -21,9 +21,9 @@ Details
 =====
 
 1.  A single thread uses multiplexed IO (epoll/kqueue) to read requests from the network. It then divides a request into parallel operations that can proceed independently.
-2.  Each parallel operation is sent to a worker thread for completion. Parallel operations could complete out of order. All results are sent to an aggregator thread for ordering.
+2.  Each parallel operation is sent to a worker thread for completion. Parallel operations from a single request could complete out of order. All results are sent to an aggregator thread for ordering.
 3.  An aggregator thread puts results back in order and sends them to clients.
-4. The image processing kernels will be written in Halide which will allow us to make use of SIMD instructions.
+4. The image processing kernels will be written in [Halide](http://halide-lang.org) which will allow us to make use of SIMD instructions.
 
 General principles
 ---------------
