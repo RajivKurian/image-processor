@@ -23,17 +23,19 @@ private:
 
 class Buffer {
 public:
-  Buffer(uint32_t capacity);
+  explicit Buffer(uint32_t capacity);
   // Disable copy constructor.
   Buffer(const Buffer& that) = delete;
+  uint8_t* getReadPosition() const;
   // Called to resume writing to a buffer.
-  write_marker getCurrentWritePosition();
+  write_marker getCurrentWritePosition() const;
   bool updateWritePosition(uint32_t num_bytes_written);
-  uint8_t* getReadPosition();
   void reset();
   ~Buffer();
 
 private:
+  // No zero argument constructor.
+  Buffer();
   uint8_t* start_;
   uint32_t capacity_;
   uint32_t write_pos_;

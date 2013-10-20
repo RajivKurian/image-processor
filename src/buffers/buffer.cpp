@@ -12,12 +12,8 @@ Buffer::~Buffer() {
   delete[] start_;
 }
 
-write_marker Buffer::getCurrentWritePosition() {
+write_marker Buffer::getCurrentWritePosition() const {
   return write_marker{start_+write_pos_, capacity_ - write_pos_ - 1};
-}
-
-uint8_t* Buffer::getReadPosition() {
-  return start_;
 }
 
 bool Buffer::updateWritePosition(uint32_t num_bytes_written) {
@@ -26,6 +22,10 @@ bool Buffer::updateWritePosition(uint32_t num_bytes_written) {
     return true;
   }
   return false;
+}
+
+uint8_t* Buffer::getReadPosition() const {
+  return start_;
 }
 
 void Buffer::reset() {
