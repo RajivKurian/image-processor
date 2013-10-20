@@ -28,7 +28,7 @@ General principles
 Future Extensions
 ---------------
 
- We could model the GPU as an independent worker. Cuda streams, atomics and barriers could help us do this. Image processing stages would have to be written for the GPU too. Halide already has a GPU backend so maybe we can repurpose it and use the same kernels.
+ We could model the GPU as an independent worker. Cuda streams, atomics and barriers could help us do this. Image processing operations would have to be written for the GPU too. Halide already has a GPU backend so maybe we can repurpose it and use the same kernels.
 
 
 
