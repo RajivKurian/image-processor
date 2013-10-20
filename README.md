@@ -11,6 +11,7 @@ Building
 1.  Make sure you have cmake. apt-get (debian) and port(OS X) both have repos.
 2.  Check out the project.
 3.  Navigate to the folder and create a build folder say "build".
+4. Navigate to the build folder.
 4.  Run: cmake ../src
 5. Run: make
 
