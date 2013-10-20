@@ -1,4 +1,4 @@
-image-processor
+Image-processor
 ===============
 
 An Image processing application.
