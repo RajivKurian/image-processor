@@ -30,7 +30,7 @@ General principles
 
 1.  Preallocate: In steady state there should be very few allocations. The ring buffer entries are preallocated. Buffers are allocated from a pool. This forces us to pick the right constants, but is good for performance.
 2.  Single writer: Even though the app is multi-threaded, each thread has a fixed role. No two threads write to the same memory. This is good for performance and allows us to write clean, easy to debug single-threaded logic for the most part. Non-blocking queues which enforce the single writer principle are used to communicate between threads. This rule is also applied to memory allocations. If a buffer is allocated in a thread, then it is also freed by that thread.
-3.  Try to minimize data copy: Image data can be pretty big, hence copies are expensive. Use zero-copy buffers as much as possible.
+3.  Try to minimize data copy: Image data can be pretty big, hence copies are expensive.
 
 Future Extensions
 ---------------
