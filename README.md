@@ -1,14 +1,20 @@
 Image-processor
 ===============
 
-An Image processing application.
-
-**Status:**  Just in the ideas phase now. No real code.
-
-A multi-threaded application that:
+A multi-threaded image processing application that:
 
 1.  Allows clients to create pipelines from a collection of image-processing operations.
 2.  Clients then send in requests that include a pipeline id and an image.
+
+Building
+-------
+1.  Make sure you have cmake. apt-get (debian) and port(OS X) both have repos.
+2.  Check out the project.
+3.  Navigate to the folder and create a build folder say "build".
+4.  Run: cmake ../src
+5. Run: make
+
+**Status:**  Just in the ideas phase now. Minimal real code.
 
 Details
 =====
