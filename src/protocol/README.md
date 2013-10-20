@@ -19,9 +19,9 @@ Implementation:
 
 Use a length prefixed protocol so that appropriate contiguous buffers can be allocated to hold an entire request. For eg:
 
-Length of request| Request
+Length of request | Request
 
-<----4 bytes---->| length * bytes
+<----4 bytes---->|<- length * bytes->
 
 This will allow us to:
 
