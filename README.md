@@ -12,8 +12,8 @@ Building
 2.  Check out the project.
 3.  Navigate to the folder and create a build folder say "build".
 4. Navigate to the build folder.
-4.  Run: cmake ../src
-5. Run: make
+5.  Run: cmake ../src
+6. Run: make
 
 **Status:**  Just in the ideas phase now. Minimal real code.
 
