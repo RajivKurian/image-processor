@@ -19,7 +19,7 @@ Building
 
 If you need Eclipse CDT files do something like:
 
-cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_ECLIPSE_VERSION=4.3 ../src 
+    cmake -G"Eclipse CDT4 - Unix Makefiles" -D CMAKE_ECLIPSE_VERSION=4.3 ../src 
 
 **Status:**  Just in the ideas phase now. Minimal real code.
 
