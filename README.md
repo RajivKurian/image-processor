@@ -23,6 +23,8 @@ If you need Eclipse CDT files do something like:
 
 **Status:**  Just in the ideas phase now. Minimal real code.
 
+[![Build Status](https://travis-ci.org/RajivKurian/image-processor.png)](https://travis-ci.org/RajivKurian/image-processor)
+
 Details
 =====
 
