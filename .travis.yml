@@ -9,7 +9,7 @@ before_script:
   - cd build
   - cmake ../project
 
-script: make
+script: make && make test
 
 notifications:
   recipients:
