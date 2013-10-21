@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.6)
 project (Image-Processor)
 
-list( APPEND CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS} ")
+list( APPEND CMAKE_CXX_FLAGS "-std=c++0x -g -Wall ${CMAKE_CXX_FLAGS} ")
 
 ##########
 # Src
@@ -15,7 +15,7 @@ ADD_SUBDIRECTORY(src/buffers)
 
 
 #####################
-# Gtest-1.7
+# Testing with Gtest-1.7
 #####################
 ADD_SUBDIRECTORY(ext/gtest-1.7.0)
 enable_testing()
