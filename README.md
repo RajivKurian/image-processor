@@ -14,12 +14,12 @@ Building
     cd image-processor
     mkdir build
     cd build
-    cmake ../src
+    cmake ../project
     make
 
 If you need Eclipse CDT files do something like:
 
-    cmake -G"Eclipse CDT4 - Unix Makefiles"  -D_ECLIPSE_VERSION=4.3  ../src
+    cmake -G"Eclipse CDT4 - Unix Makefiles"  -D_ECLIPSE_VERSION=4.3  ../project
 
 **Status:**  Just in the ideas phase now. Minimal real code.
 
