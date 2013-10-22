@@ -6,6 +6,7 @@ list( APPEND CMAKE_CXX_FLAGS "-std=c++0x -g -Wall ${CMAKE_CXX_FLAGS} ")
 ##########
 # Src
 ##########
+# For each subdirectory set the library name, add subdirectory and add header to includes.
 #ADD_SUBDIRECTORY(src/aggregator)
 
 # Buffers.
