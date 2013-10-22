@@ -29,6 +29,7 @@ public:
   uint8_t* getReadPosition() const;
   // Called to resume writing to a buffer.
   write_marker getCurrentWritePosition() const;
+  uint32_t getCapacity() const;
   bool updateWritePosition(uint32_t num_bytes_written);
   void reset();
   ~Buffer();

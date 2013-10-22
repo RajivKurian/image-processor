@@ -20,6 +20,10 @@ write_marker Buffer::getCurrentWritePosition() const {
   return write_marker{start_+write_pos_, capacity_ - write_pos_ - 1};
 }
 
+uint32_t Buffer::getCapacity() const {
+  return capacity_;
+}
+
 bool Buffer::updateWritePosition(uint32_t num_bytes_written) {
   if ((num_bytes_written + write_pos_) <= capacity_ - 1) {
     write_pos_ += num_bytes_written;

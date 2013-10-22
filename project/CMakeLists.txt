@@ -32,6 +32,9 @@ include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 ###########################
 # Unit tests
 ##########################
+# Add custom ctest settings:
+configure_file(../project/CTestCustom.cmake CTestCustom.cmake)
+
 # Add test file
 include_directories(${COMMON_INCLUDES})
 add_executable( runUnitTests tests/buffertest.cpp)
