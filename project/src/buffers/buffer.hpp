@@ -26,7 +26,7 @@ public:
   explicit Buffer(uint32_t capacity);
   // Disable copy constructor.
   Buffer(const Buffer& that) = delete;
-  uint8_t* getReadPosition() const;
+  const uint8_t* getReadPosition() const;
   // Called to resume writing to a buffer.
   write_marker getCurrentWritePosition() const;
   uint32_t getCapacity() const;
@@ -38,7 +38,7 @@ private:
   // No zero argument constructor.
   Buffer();
   uint32_t capacity_;
-  uint32_t write_pos_;
+  uint32_t num_bytes_written_;
   uint8_t* start_;
 };
 

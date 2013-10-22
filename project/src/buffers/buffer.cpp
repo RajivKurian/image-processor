@@ -6,7 +6,7 @@ namespace processor {
 
 Buffer::Buffer(uint32_t capacity) :
   capacity_(capacity),
-  write_pos_(0),
+  num_bytes_written_(0),
   start_(new uint8_t[capacity]) {  // TODO: Shitty new, fix this.
     printf("\n Created a buffer with %d capacity", capacity);
   }
@@ -17,7 +17,7 @@ Buffer::~Buffer() {
 }
 
 write_marker Buffer::getCurrentWritePosition() const {
-  return write_marker{start_+write_pos_, capacity_ - write_pos_ - 1};
+  return write_marker{start_+ num_bytes_written_, capacity_ - num_bytes_written_};
 }
 
 uint32_t Buffer::getCapacity() const {
@@ -25,19 +25,19 @@ uint32_t Buffer::getCapacity() const {
 }
 
 bool Buffer::updateWritePosition(uint32_t num_bytes_written) {
-  if ((num_bytes_written + write_pos_) <= capacity_ - 1) {
-    write_pos_ += num_bytes_written;
+  if ((num_bytes_written_ + num_bytes_written) <= capacity_) {
+    num_bytes_written_ += num_bytes_written;
     return true;
   }
   return false;
 }
 
-uint8_t* Buffer::getReadPosition() const {
+const uint8_t* Buffer::getReadPosition() const {
   return start_;
 }
 
 void Buffer::reset() {
-  write_pos_ = 0;
+  num_bytes_written_ = 0;
 }
 
 }  // image-processor
