@@ -52,8 +52,8 @@ TEST_F(BufferTest, CheckInitialWritePosition) {
     buffer_->getReadPosition()) << "Initial write pointer doesn't equal start position";
 }
 
-TEST(bufferTest, Write) {
-  auto buffer_ = new processor::Buffer(kBufferSize);
+TEST_F(BufferTest, Write) {
+  //auto buffer_ = new processor::Buffer(kBufferSize);
 
   // Write 5 chars to the underlying buffer and update the write position.
   auto marker = buffer_->getCurrentWritePosition();
@@ -83,7 +83,7 @@ TEST(bufferTest, Write) {
   for (uint32_t i = 0; i < kNumChars; i++)
     EXPECT_EQ(kChars[i], start[i]) << "Second Start not expected at pos " << i << " " << start[i];
 
-  delete buffer_;
+  //delete buffer_;
 }
 
 }  // buffertest
