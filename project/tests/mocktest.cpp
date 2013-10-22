@@ -8,3 +8,4 @@ TEST(MyMethod, WorksProperly) {
   for (int i = 0; i < sz; ++i)
     EXPECT_EQ(arr1[i], arr2[i]);
 }
+

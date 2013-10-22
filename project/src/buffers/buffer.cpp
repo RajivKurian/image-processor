@@ -1,14 +1,18 @@
 #include "buffer.hpp"
 
+#include <stdio.h>
+
 namespace processor {
 
 Buffer::Buffer(uint32_t capacity) :
   capacity_(capacity),
   write_pos_(0),
   start_(new uint8_t[capacity]) {  // TODO: Shitty new, fix this.
+    printf("\n Created a buffer with %d capacity", capacity);
   }
 
 Buffer::~Buffer() {
+  printf("\nBuffer destructor called.\n");
   delete[] start_;
 }
 

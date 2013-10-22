@@ -36,9 +36,9 @@ public:
 private:
   // No zero argument constructor.
   Buffer();
-  uint8_t* start_;
   uint32_t capacity_;
   uint32_t write_pos_;
+  uint8_t* start_;
 };
 
 }  // image-processor.

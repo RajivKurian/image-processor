@@ -6,12 +6,14 @@ list( APPEND CMAKE_CXX_FLAGS "-std=c++0x -g -Wall ${CMAKE_CXX_FLAGS} ")
 ##########
 # Src
 ##########
-#ADD_SUBDIRECTORY(aggregator)
+#ADD_SUBDIRECTORY(src/aggregator)
 ADD_SUBDIRECTORY(src/buffers)
-#ADD_SUBDIRECTORY(producers)
-#ADD_SUBDIRECTORY(protocol)
-#ADD_SUBDIRECTORY(queues)
-#ADD_SUBDIRECTORY(workers)
+#ADD_SUBDIRECTORY(src/producers)
+#ADD_SUBDIRECTORY(src/protocol)
+#ADD_SUBDIRECTORY(src/queues)
+#ADD_SUBDIRECTORY(src/workers)
+set (COMMON_INCLUDES src/buffers)
+
 
 
 #####################
@@ -26,8 +28,8 @@ include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 # Unit tests
 ##########################
 # Add test cpp file
-add_executable( runUnitTests tests/mocktest.cpp )
+include_directories(${COMMON_INCLUDES})
+add_executable( runUnitTests tests/buffertest.cpp)
 # Link test executable against gtest & gtest_main
-target_link_libraries(runUnitTests gtest gtest_main)
+target_link_libraries(runUnitTests gtest gtest_main buffer)
 add_test( runUnitTests runUnitTests )
-
