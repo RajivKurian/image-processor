@@ -1,6 +1,5 @@
 #include "ring_buffer.hpp"
 
-#include <iostream>
 #include <thread>
 
 #include "gtest/gtest.h"
@@ -8,6 +7,7 @@
 namespace ringbuffertest {
 
 static const uint32_t kRingBufferSize = 4;
+static const int kNumEventsToGenerate = 12;
 
 class TestEvent {
 public:
@@ -19,11 +19,11 @@ public:
     for (int i = 0; i < 5; i++) {
       fivechars_[i] = 'a';
     }
-    std::cout << std::endl << "Test event created." << std::endl;
+    printf("\nTest event created.\n");;
   }
   ~TestEvent() {
     delete[] fivechars_;
-    std::cout << std::endl << "Test event destructed" << std::endl;
+    printf("\nTest event destructed\n");
   }
 };
 
@@ -66,44 +66,72 @@ TEST_F(RingBufferTest, HandlesCreation) {
 }
 
 static int TestConsume(processor::RingBuffer<TestEvent>* ring_buffer) {
+  int64_t prev_sequence = -1;
   int64_t next_sequence = -1;
+  int num_events_processed = 0;
   while (true) {
-    next_sequence = ring_buffer->getProducerSequence();
-    if (next_sequence > -1) break;
+    // Spin till a new sequence is available.
+    while (true) {
+      next_sequence = ring_buffer->getProducerSequence();
+      if (next_sequence > prev_sequence) break;
+      _mm_pause();
+    }
+    // Process everything in the batch.
+    printf("\nConsumer: Next sequence is %" PRId64 ", number of events to process is %" PRId64 "\n",
+            next_sequence, next_sequence - prev_sequence);
+    for (int64_t index = prev_sequence + 1; index <= next_sequence; index++) {
+      printf("\nConsumer: Processing sequence %" PRId64 " \n", index);
+      auto entry = ring_buffer->get(index);
+      auto num = entry->num_;
+      if (num == -2) {
+        printf("\nConsumer: Received exit signal exiting.\n");
+        return 1;
+      } else {
+        printf("\nConsumer: Received a proper entry.\n");
+        auto arr = entry->fivechars_;
+        EXPECT_EQ(num, index) << "Consumer: Did not see the right value of num " << num;
+        for (int i = 0; i < 5; i++) {
+          EXPECT_EQ(arr[i], 'b') << "Consumer: Entry not constructed properly found " << arr[i];
+        }
+      }
+    }
+    // Mark events consumed.
+    ring_buffer->markConsumed(next_sequence);
+    prev_sequence = next_sequence;
+    ++num_events_processed;
   }
-  EXPECT_EQ(next_sequence, 0) << "Consumer did not get the next sequence";
-  auto entry = ring_buffer->get(next_sequence);
-  auto arr = entry->fivechars_;
-  EXPECT_EQ(entry->num_, 1) << "Consumer did not see the right valye of num " << entry->num_;
-  for (int i = 0; i < 5; i++) {
-    EXPECT_EQ(arr[i], 'b') << "Consumer Entry not constructed properly found " << arr[i];
-  }
+  printf("\nTotal num events processed is %d\n", num_events_processed);
   return 1;
 }
 
-TEST_F(RingBufferTest, HandlesProduction) {
+TEST_F(RingBufferTest, HandlesProductionAndConsumption) {
+
   // Start the consumer.
   std::thread t{TestConsume, ring_buffer_};
-  t.detach();
 
   // Producer.
-  auto next_write_index = ring_buffer_->nextProducerSequence();
-  EXPECT_EQ(next_write_index, 0) << "Ring buffer index is " << next_write_index << " should have been " << 1;
-  auto entry = ring_buffer_->get(next_write_index);
-  auto arr = entry->fivechars_;
+  printf("\nProducer: Number of events to generate %d\n", kNumEventsToGenerate);
+  for (int num_event = 0; num_event < kNumEventsToGenerate; num_event ++) {
+    auto next_write_index = ring_buffer_->nextProducerSequence();
+    EXPECT_EQ(next_write_index, num_event) << "Producer: Ring buffer index is " << next_write_index << " should have been " << 1;
+    auto entry = ring_buffer_->get(next_write_index);
+    auto arr = entry->fivechars_;
 
-  // First check to see the default event holds.
-  EXPECT_EQ(entry->num_, 0) << "Entry not constructed properly num is " << entry->num_;
-  // Change num to 1;
-  entry->num_ = 1;
-  for (int i = 0; i < 5; i++) {
-    EXPECT_EQ(arr[i], 'a') << "Entry not constructed properly found " << arr[i];
-    // Then change array to contain only 'b's.
-    arr[i] = 'b';
+    if (num_event == kNumEventsToGenerate - 1) {
+      // Signal exit with a -2;
+      entry->num_ = -2;
+    } else {
+      // Change num to 1.
+      entry->num_ = num_event;
+      for (int i = 0; i < 5; i++) {
+        // Then change array to contain only 'b's.
+        arr[i] = 'b';
+      }
+    }
+    // Then publish.
+    ring_buffer_->publish(next_write_index);
   }
-  // Then publish.
-  ring_buffer_->publish(next_write_index);
+  t.join();
 }
 
 } // ringbuffertest
-

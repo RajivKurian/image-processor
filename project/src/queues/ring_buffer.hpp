@@ -1,20 +1,18 @@
 #ifndef RING_BUFFER_H_
 #define RING_BUFFER_H_
 
-#include <stdint.h>
 #include <x86intrin.h>
 
 #include <atomic>
-#include <iostream>
+#include <cinttypes>
+#include <cstdio>
 
 namespace processor {
 
 static const int kCacheLineSize = 64;
 
 // A simple ring buffer for single producers and single consumers.
-// Inspired by the Disruptor.
-// Encapsulates wait-strategy and claim strategy. No pluggability.
-
+// Does not support parallel consumers for now.
 template<typename T>
 class RingBuffer {
 
@@ -42,19 +40,16 @@ public:
   // Called by the producer to get the next publish slot.
   // Will block till there is a slot to claim.
   int64_t nextProducerSequence() const {
-    std:: cout << std::endl << "HEYYYY" << std::endl;
     int64_t current_producer_sequence = publisher_sequence_.load(std::memory_order::memory_order_relaxed);
-    std::cout << "\ncurrent producer sequence is " << current_producer_sequence << "\n";
     int64_t next_producer_sequence = current_producer_sequence + 1;
-    std::cout << "\nNext producer sequence is " << next_producer_sequence << "\nEvents size is " << events_size_ << "\n";
     int64_t wrap_point = next_producer_sequence - events_size_;
-    std::cout << "\nwrap point is " << wrap_point << "\n";
+    printf("\nCurrent seq: %" PRId64 ", next seq: %" PRId64 ", wrap_point: %" PRId64 "\n", current_producer_sequence, next_producer_sequence, wrap_point);
     // TODO(Rajiv): Combine pausing with backoff + sleep.
     while (getConsumerSequence() <= wrap_point) {
       _mm_pause();
     }
     return next_producer_sequence;
-}
+  }
 
   // Called by the producer to see what entries the consumer is done with.
   inline int64_t getConsumerSequence() const {
