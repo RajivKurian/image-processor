@@ -83,9 +83,10 @@ static int TestConsume(processor::RingBuffer<TestEvent>* ring_buffer) {
       printf("\nConsumer: Processing sequence %" PRId64 " \n", index);
       auto entry = ring_buffer->get(index);
       auto num = entry->num_;
+      ++num_events_processed;
       if (num == -2) {
         printf("\nConsumer: Received exit signal exiting.\n");
-        return 1;
+        goto exit_consumer;
       } else {
         printf("\nConsumer: Received a proper entry.\n");
         auto arr = entry->fivechars_;
@@ -98,15 +99,16 @@ static int TestConsume(processor::RingBuffer<TestEvent>* ring_buffer) {
     // Mark events consumed.
     ring_buffer->markConsumed(next_sequence);
     prev_sequence = next_sequence;
-    ++num_events_processed;
   }
+exit_consumer:
   printf("\nTotal num events processed is %d\n", num_events_processed);
   return 1;
 }
 
 TEST_F(RingBufferTest, HandlesProductionAndConsumption) {
 
-  // Start the consumer.
+  // Start the consumer thread.
+  // We must join later otherwise the application will exit while the consumer thread is still running.
   std::thread t{TestConsume, ring_buffer_};
 
   // Producer.
