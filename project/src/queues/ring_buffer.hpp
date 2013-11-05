@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 //TODO: Write a cross-platform pause function.
-#include <xmmintrin.h>
+#include <x86intrin.h>
 
 #include <atomic>
 #include <iostream>
