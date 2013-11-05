@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.6)
 project (Image-Processor)
 
-list( APPEND CMAKE_CXX_FLAGS "-std=c++0x -march=native -g -Wall ${CMAKE_CXX_FLAGS} ")
+list( APPEND CMAKE_CXX_FLAGS "-std=c++0x -march=native -O2 -g -Wall ${CMAKE_CXX_FLAGS} ")
 
 ##########
 # Src
@@ -17,7 +17,6 @@ list (APPEND COMMON_INCLUDES src/buffers)
 #ADD_SUBDIRECTORY(src/producers)
 #ADD_SUBDIRECTORY(src/protocol)
 
-set (ring_buffer_LIB ring_buffer)
 ADD_SUBDIRECTORY(src/queues)
 list (APPEND COMMON_INCLUDES src/queues)
 
@@ -42,7 +41,7 @@ configure_file(../project/CTestCustom.cmake CTestCustom.cmake)
 
 # Add test file
 include_directories(${COMMON_INCLUDES})
-add_executable( runUnitTests tests/buffertest.cpp)
+add_executable( runUnitTests tests/buffer_test.cpp tests/ring_buffer_test.cpp)
 # Link test executable against gtest & gtest_main
 target_link_libraries(runUnitTests gtest gtest_main ${buffer_LIB})
 add_test( runUnitTests runUnitTests )
