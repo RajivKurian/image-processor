@@ -2,7 +2,6 @@
 #define RING_BUFFER_H_
 
 #include <stdint.h>
-//TODO: Write a cross-platform pause function.
 #include <x86intrin.h>
 
 #include <atomic>
