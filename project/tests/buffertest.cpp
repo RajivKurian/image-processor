@@ -53,7 +53,6 @@ TEST_F(BufferTest, CheckInitialWritePosition) {
 }
 
 TEST_F(BufferTest, Write) {
-  //auto buffer_ = new processor::Buffer(kBufferSize);
 
   // Write 5 chars to the underlying buffer and update the write position.
   auto marker = buffer_->getCurrentWritePosition();
@@ -83,7 +82,9 @@ TEST_F(BufferTest, Write) {
   for (uint32_t i = 0; i < kNumChars; i++)
     EXPECT_EQ(kChars[i], start[i]) << "Second Start not expected at pos " << i << " " << start[i];
 
-  //delete buffer_;
+  // Check to see if setting an illegal write position works.
+  EXPECT_EQ(buffer_->updateWritePosition(marker.remaining + 1), false) << "Buffer accepted an illegal update position";
+  printf("\nBuffer position after illegal update is %d\n", buffer_->getNumBytes());
 }
 
 }  // buffertest

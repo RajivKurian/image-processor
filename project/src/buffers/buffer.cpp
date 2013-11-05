@@ -24,6 +24,10 @@ uint32_t Buffer::getCapacity() const {
   return capacity_;
 }
 
+uint8_t Buffer::getNumBytes() const {
+  return num_bytes_written_;
+}
+
 bool Buffer::updateWritePosition(uint32_t num_bytes_written) {
   if ((num_bytes_written_ + num_bytes_written) <= capacity_) {
     num_bytes_written_ += num_bytes_written;

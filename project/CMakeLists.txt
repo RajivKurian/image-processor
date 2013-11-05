@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.6)
 project (Image-Processor)
 
-list( APPEND CMAKE_CXX_FLAGS "-std=c++0x -g -Wall ${CMAKE_CXX_FLAGS} ")
+list( APPEND CMAKE_CXX_FLAGS "-std=c++0x -march=native -g -Wall ${CMAKE_CXX_FLAGS} ")
 
 ##########
 # Src
@@ -16,7 +16,12 @@ list (APPEND COMMON_INCLUDES src/buffers)
 
 #ADD_SUBDIRECTORY(src/producers)
 #ADD_SUBDIRECTORY(src/protocol)
-#ADD_SUBDIRECTORY(src/queues)
+
+set (ring_buffer_LIB ring_buffer)
+ADD_SUBDIRECTORY(src/queues)
+list (APPEND COMMON_INCLUDES src/queues)
+
+
 #ADD_SUBDIRECTORY(src/workers)
 
 
