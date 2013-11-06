@@ -47,7 +47,7 @@ class RingBufferTest : public ::testing::Test {
   virtual void SetUp() {
     // Code here will be called immediately after the constructor (right
     // before each test).
-    ring_buffer_ = new processor::RingBuffer<TestEvent>(kRingBufferSize);
+    ring_buffer_ = new processor::RingBuffer<TestEvent, kRingBufferSize>();
   }
 
   virtual void TearDown() {
@@ -58,14 +58,15 @@ class RingBufferTest : public ::testing::Test {
 
   
   // Objects declared here can be used by all tests in the test case for Foo.
-  processor::RingBuffer<TestEvent>* ring_buffer_;
+  processor::RingBuffer<TestEvent, kRingBufferSize>* ring_buffer_;
 };
 
 TEST_F(RingBufferTest, HandlesCreation) {
   EXPECT_EQ(ring_buffer_->getBufferSize(), kRingBufferSize) << "Ring Buffer size does not match after creation";
 }
 
-static int TestConsume(processor::RingBuffer<TestEvent>* ring_buffer) {
+template<int RingBufferSize>
+static int TestConsume(processor::RingBuffer<TestEvent, RingBufferSize>* ring_buffer) {
   int64_t prev_sequence = -1;
   int64_t next_sequence = -1;
   int num_events_processed = 0;
@@ -109,14 +110,14 @@ exit_consumer:
 TEST_F(RingBufferTest, HandlesProductionAndConsumption) {
 
   // Start the consumer thread.
-  // We must join later otherwise the application will exit while the consumer thread is still running.
-  std::thread t{TestConsume, ring_buffer_};
+  // We must join later otherwise the application could exit while the consumer thread is still running.
+  std::thread t{TestConsume<kRingBufferSize>, ring_buffer_};
 
   // Producer.
   //printf("\nProducer: Number of events to generate %d\n", kNumEventsToGenerate);
   for (int num_event = 0; num_event < kNumEventsToGenerate; num_event ++) {
     auto next_write_index = ring_buffer_->nextProducerSequence();
-    EXPECT_EQ(next_write_index, num_event) << "Producer: Ring buffer index is " << next_write_index << " should have been " << 1;
+    EXPECT_EQ(next_write_index, num_event) << "Producer: Ring buffer index is " << next_write_index << " should have been " << num_event;
     auto entry = ring_buffer_->get(next_write_index);
     auto arr = entry->fivechars_;
 

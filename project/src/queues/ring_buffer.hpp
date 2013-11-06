@@ -13,16 +13,15 @@ static const int kCacheLineSize = 64;
 
 // A simple ring buffer for single producers and single consumers.
 // Does not support parallel consumers for now.
-template<typename T>
+template<typename T, int64_t size>
 class RingBuffer {
 
 public:
   // Events_size must be a power of two.
-  RingBuffer(int64_t events_size) :
+  RingBuffer() :
     publisher_sequence_(-1),
-    events_(new T[events_size]),
-    events_size_(events_size),
-    index_mask_(events_size - 1),
+    events_size_(size),
+    index_mask_(size - 1),
     consumer_sequence_(-1) {
   }
 
@@ -73,13 +72,12 @@ public:
   }
 
   ~RingBuffer() {
-    delete[] events_;
   }
 
 private:
   char cache_line_pad_1_[kCacheLineSize];
   std::atomic<int64_t> publisher_sequence_;
-  T* events_;
+  T events_[size];
   int64_t events_size_;
   int64_t index_mask_;
   char cache_line_pad_2_[kCacheLineSize];
