@@ -72,10 +72,9 @@ static int TestConsume(processor::RingBuffer<TestEvent, RingBufferSize>* ring_bu
   int num_events_processed = 0;
   while (true) {
     // Spin till a new sequence is available.
-    while (true) {
-      next_sequence = ring_buffer->getProducerSequence();
-      if (next_sequence > prev_sequence) break;
+    while (next_sequence <= prev_sequence) {
       _mm_pause();
+      next_sequence = ring_buffer->getProducerSequence();
     }
     // Process everything in the batch.
     //printf("\nConsumer: Next sequence is %" PRId64 ", number of events to process is %" PRId64 "\n",
@@ -129,7 +128,7 @@ TEST_F(RingBufferTest, HandlesProductionAndConsumption) {
       entry->num_ = num_event;
       for (int i = 0; i < 5; i++) {
         // Then change array to contain only 'b's.
-        arr[i] = 'b';
+        if (arr[i] != 'b') arr[i] = 'b';
       }
     }
     // Then publish.
