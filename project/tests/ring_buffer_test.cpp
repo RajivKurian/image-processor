@@ -6,8 +6,8 @@
 
 namespace ringbuffertest {
 
-static const uint32_t kRingBufferSize = 4;
-static const int kNumEventsToGenerate = 12;
+static const uint32_t kRingBufferSize = 1024;
+static const int kNumEventsToGenerate = 2000000;
 
 class TestEvent {
 public:
@@ -19,11 +19,11 @@ public:
     for (int i = 0; i < 5; i++) {
       fivechars_[i] = 'a';
     }
-    printf("\nTest event created.\n");;
+    //printf("\nTest event created.\n");;
   }
   ~TestEvent() {
     delete[] fivechars_;
-    printf("\nTest event destructed\n");
+    //printf("\nTest event destructed\n");
   }
 };
 
@@ -77,18 +77,18 @@ static int TestConsume(processor::RingBuffer<TestEvent>* ring_buffer) {
       _mm_pause();
     }
     // Process everything in the batch.
-    printf("\nConsumer: Next sequence is %" PRId64 ", number of events to process is %" PRId64 "\n",
-            next_sequence, next_sequence - prev_sequence);
+    //printf("\nConsumer: Next sequence is %" PRId64 ", number of events to process is %" PRId64 "\n",
+    //        next_sequence, next_sequence - prev_sequence);
     for (int64_t index = prev_sequence + 1; index <= next_sequence; index++) {
-      printf("\nConsumer: Processing sequence %" PRId64 " \n", index);
+      //printf("\nConsumer: Processing sequence %" PRId64 " \n", index);
       auto entry = ring_buffer->get(index);
       auto num = entry->num_;
       ++num_events_processed;
       if (num == -2) {
-        printf("\nConsumer: Received exit signal exiting.\n");
+        //printf("\nConsumer: Received exit signal exiting.\n");
         goto exit_consumer;
       } else {
-        printf("\nConsumer: Received a proper entry.\n");
+        //printf("\nConsumer: Received a proper entry.\n");
         auto arr = entry->fivechars_;
         EXPECT_EQ(num, index) << "Consumer: Did not see the right value of num " << num;
         for (int i = 0; i < 5; i++) {
@@ -102,6 +102,7 @@ static int TestConsume(processor::RingBuffer<TestEvent>* ring_buffer) {
   }
 exit_consumer:
   printf("\nTotal num events processed is %d\n", num_events_processed);
+  EXPECT_EQ(num_events_processed, kNumEventsToGenerate);
   return 1;
 }
 
@@ -112,7 +113,7 @@ TEST_F(RingBufferTest, HandlesProductionAndConsumption) {
   std::thread t{TestConsume, ring_buffer_};
 
   // Producer.
-  printf("\nProducer: Number of events to generate %d\n", kNumEventsToGenerate);
+  //printf("\nProducer: Number of events to generate %d\n", kNumEventsToGenerate);
   for (int num_event = 0; num_event < kNumEventsToGenerate; num_event ++) {
     auto next_write_index = ring_buffer_->nextProducerSequence();
     EXPECT_EQ(next_write_index, num_event) << "Producer: Ring buffer index is " << next_write_index << " should have been " << 1;
