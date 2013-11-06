@@ -28,12 +28,12 @@ public:
 
   // Used to get an event for a given sequence.
   //Can be called by both the producer and consumer.
-  T* get(int64_t sequence) const {
+  inline T* get(int64_t sequence) {
     return &events_[sequence & index_mask_];
   }
 
   // Can be called by either producer or consumer.
-  int64_t getBufferSize()  const {
+  inline int64_t getBufferSize() const {
     return events_size_;
   }
 
