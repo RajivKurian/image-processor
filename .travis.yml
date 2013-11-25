@@ -11,7 +11,7 @@ before_script:
 script:
   - make
   - ./runUnitTests
-  - perf/ring_buffer_perf
+  - perf/perf
 
 notifications:
   recipients:

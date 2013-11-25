@@ -84,16 +84,19 @@ static int TestConsume(processor::RingBuffer<TestEvent, RingBufferSize>* ring_bu
       auto entry = ring_buffer->get(index);
       auto num = entry->num_;
       ++num_events_processed;
-      if (num == -2) {
-        //printf("\nConsumer: Received exit signal exiting.\n");
-        goto exit_consumer;
-      } else {
+      if (num != -2) {
         //printf("\nConsumer: Received a proper entry.\n");
         auto arr = entry->fivechars_;
         EXPECT_EQ(num, index) << "Consumer: Did not see the right value of num " << num;
         for (int i = 0; i < 5; i++) {
           EXPECT_EQ(arr[i], 'b') << "Consumer: Entry not constructed properly found " << arr[i];
         }
+      } else {
+        // Exit signal.
+        // Mark events consumed and exit.
+        ring_buffer->markConsumed(next_sequence);
+         prev_sequence = next_sequence;
+         goto exit_consumer;
       }
     }
     // Mark events consumed.

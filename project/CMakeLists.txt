@@ -1,9 +1,9 @@
 cmake_minimum_required (VERSION 2.6)
 project (Image-Processor)
 
-
-#list( APPEND CMAKE_CXX_FLAGS "-std=c++0x -march=native -O2 -g -Wall ${CMAKE_CXX_FLAGS} ")
-
+#############################
+## Compiler and platform specific flags.
+#############################
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   # Mac OS X specific code
   SET(OperatingSystem "Mac OS X")
@@ -14,9 +14,11 @@ ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   list( APPEND CMAKE_CXX_FLAGS "-pthread -std=c++0x -march=native -O2 -g -Wall ${CMAKE_CXX_FLAGS} ")
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
+
 ##########
 # Src
 ##########
+
 # For each subdirectory set the library name, add subdirectory and add header to includes.
 #ADD_SUBDIRECTORY(src/aggregator)
 
@@ -33,12 +35,18 @@ list (APPEND COMMON_INCLUDES src/queues)
 
 #ADD_SUBDIRECTORY(src/workers)
 
+
+####################
+# Perf Testing with Hayai
+####################
+#ADD_SUBDIRECTORY(ext/hayai)
+include_directories(ext/hayai/src)
+
 ####################
 # Perf Tests.
 ####################
 include_directories(${COMMON_INCLUDES})
 ADD_SUBDIRECTORY(perf)
-
 
 
 #####################
