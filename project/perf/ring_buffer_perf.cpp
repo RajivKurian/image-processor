@@ -7,6 +7,16 @@
 #include <ratio>
 #include <thread>
 
+#define KNRM  "\x1B[0m"
+#define KRED  "\x1B[31m"
+#define KGRN  "\x1B[32m"
+#define KYEL  "\x1B[33m"
+#define KBLU  "\x1B[34m"
+#define KMAG  "\x1B[35m"
+#define KCYN  "\x1B[36m"
+#define KWHT  "\x1B[37m"
+
+
 static const uint32_t kRingBufferSize = 1024;
 static const int kNumEventsToGenerate = 2000000;
 
@@ -26,10 +36,7 @@ static int TestConsume(processor::RingBuffer<int, RingBufferSize>* ring_buffer) 
       next_sequence = ring_buffer->getProducerSequence();
     }
     // Process everything in the batch.
-    //printf("\nConsumer: Next sequence is %" PRId64 ", number of events to process is %" PRId64 "\n",
-    //        next_sequence, next_sequence - prev_sequence);
     for (int64_t index = prev_sequence + 1; index <= next_sequence; index++) {
-      //printf("\nConsumer: Processing sequence %" PRId64 " \n", index);
       int entry = *(ring_buffer->get(index));
       assert(entry == index);
       ++num_events_processed;
@@ -42,13 +49,13 @@ static int TestConsume(processor::RingBuffer<int, RingBufferSize>* ring_buffer) 
   }
 exit_consumer:
   double time_span = (duration_cast<duration<double>>(Clock::now() - t1)).count();
-
-  printf("\nTotal num events processed is %d in %f seconds\n", num_events_processed, time_span);
+  printf("Total num events processed is %d in %f seconds\n", num_events_processed, time_span);
   printf("Events processing rate is: %f million events per second\n", num_events_processed/(time_span * 1000000));
   return 1;
 }
 
 int main() {
+  printf ("\e[1;34mRingBuffer Performance Test.\e[0m\n");
   processor::RingBuffer<int, kRingBufferSize>* ring_buffer = new processor::RingBuffer<int, kRingBufferSize>();
   // Start the consumer thread.
   // We must join later otherwise the application could exit while the consumer thread is still running.

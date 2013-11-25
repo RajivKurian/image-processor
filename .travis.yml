@@ -8,7 +8,11 @@ before_script:
   - cd build
   - cmake ../project
 
-script: make && ./runUnitTests && perf/ring_buffer_perf
+script:
+  - make
+  - ./runUnitTests
+  - echo -e "Default \e[96m.......Performance Tests......"
+  - perf/ring_buffer_perf
 
 notifications:
   recipients:
