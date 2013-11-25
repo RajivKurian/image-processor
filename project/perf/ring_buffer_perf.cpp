@@ -7,15 +7,7 @@
 #include <ratio>
 #include <thread>
 
-#define KNRM  "\x1B[0m"
-#define KRED  "\x1B[31m"
-#define KGRN  "\x1B[32m"
-#define KYEL  "\x1B[33m"
-#define KBLU  "\x1B[34m"
-#define KMAG  "\x1B[35m"
-#define KCYN  "\x1B[36m"
-#define KWHT  "\x1B[37m"
-
+#include "colors.h"
 
 static const uint32_t kRingBufferSize = 1024;
 static const int kNumEventsToGenerate = 2000000;
@@ -49,13 +41,12 @@ static int TestConsume(processor::RingBuffer<int, RingBufferSize>* ring_buffer) 
   }
 exit_consumer:
   double time_span = (duration_cast<duration<double>>(Clock::now() - t1)).count();
-  printf("Total num events processed is %d in %f seconds\n", num_events_processed, time_span);
-  printf("Events processing rate is: %f million events per second\n", num_events_processed/(time_span * 1000000));
+  printf("Events processing rate is: " ANSI_COLOR_GREEN "%f" ANSI_COLOR_RESET " million events per second\n", num_events_processed/(time_span * 1000000));
   return 1;
 }
 
 int main() {
-  printf ("\e[1;34mRingBuffer Performance Test.\e[0m\n");
+  printf (ANSI_COLOR_BLUE "\nRingBuffer Performance Test" ANSI_COLOR_RESET "\n");
   processor::RingBuffer<int, kRingBufferSize>* ring_buffer = new processor::RingBuffer<int, kRingBufferSize>();
   // Start the consumer thread.
   // We must join later otherwise the application could exit while the consumer thread is still running.
