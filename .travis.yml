@@ -11,7 +11,7 @@ before_script:
 script:
   - make
   - ./runUnitTests
-  - echo -e "Default \e[96m.......Performance Tests......"
+  - echo -e "\e[96m.......Performance Tests......"
   - perf/ring_buffer_perf
 
 notifications:
