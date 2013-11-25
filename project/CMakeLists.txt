@@ -31,8 +31,13 @@ list (APPEND COMMON_INCLUDES src/buffers)
 ADD_SUBDIRECTORY(src/queues)
 list (APPEND COMMON_INCLUDES src/queues)
 
-
 #ADD_SUBDIRECTORY(src/workers)
+
+####################
+# Perf Tests.
+####################
+include_directories(${COMMON_INCLUDES})
+ADD_SUBDIRECTORY(perf)
 
 
 

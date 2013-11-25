@@ -8,7 +8,7 @@ before_script:
   - cd build
   - cmake ../project
 
-script: make && ./runUnitTests
+script: make && ./runUnitTests && perf/ring_buffer_perf
 
 notifications:
   recipients:
