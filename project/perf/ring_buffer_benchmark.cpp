@@ -9,7 +9,7 @@
 static const uint32_t kRingBufferSize = 1024;
 static const int kNumEventsToGenerate = 2000000;
 
-template<int RingBufferSize>
+template<int64_t RingBufferSize>
 static int TestConsume(processor::RingBuffer<int, RingBufferSize>* ring_buffer) {
 
   int64_t prev_sequence = -1;

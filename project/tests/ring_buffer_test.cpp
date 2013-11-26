@@ -95,8 +95,8 @@ static int TestConsume(processor::RingBuffer<TestEvent, RingBufferSize>* ring_bu
         // Exit signal.
         // Mark events consumed and exit.
         ring_buffer->markConsumed(next_sequence);
-         prev_sequence = next_sequence;
-         goto exit_consumer;
+        prev_sequence = next_sequence;
+        goto exit_consumer;
       }
     }
     // Mark events consumed.
