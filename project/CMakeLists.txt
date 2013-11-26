@@ -8,10 +8,10 @@ IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   # Mac OS X specific code
   SET(OperatingSystem "Mac OS X")
   #Add -stdlib=libc++ for Mac OS X.
-  list( APPEND CMAKE_CXX_FLAGS "-std=c++0x -stdlib=libc++ -march=native -O2 -g -Wall ${CMAKE_CXX_FLAGS} ")
+  list( APPEND CMAKE_CXX_FLAGS "-std=c++0x -stdlib=libc++ -march=native -O3 -g -Wall ${CMAKE_CXX_FLAGS} ")
 ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
   #Assume Linux for now.
-  list( APPEND CMAKE_CXX_FLAGS "-pthread -std=c++0x -march=native -O2 -g -Wall ${CMAKE_CXX_FLAGS} ")
+  list( APPEND CMAKE_CXX_FLAGS "-pthread -std=c++0x -march=native -O3 -g -Wall ${CMAKE_CXX_FLAGS} ")
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 
