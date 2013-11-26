@@ -50,7 +50,6 @@ public:
     }
     cached_consumer_sequence_ = getConsumerSequence();
     while (cached_consumer_sequence_ <= wrap_point) {
-    //while (getConsumerSequence() <= wrap_point) {
       _mm_pause();
       cached_consumer_sequence_ = getConsumerSequence();
     }
