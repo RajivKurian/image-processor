@@ -20,6 +20,7 @@ public:
   // Events_size must be a power of two.
   RingBuffer() :
     publisher_sequence_(-1),
+    cached_consumer_sequence_(-1),
     events_size_(size),
     index_mask_(size - 1),
     consumer_sequence_(-1) {
@@ -38,14 +39,20 @@ public:
 
   // Called by the producer to get the next publish slot.
   // Will block till there is a slot to claim.
-  int64_t nextProducerSequence() const {
+  int64_t nextProducerSequence() {
     int64_t current_producer_sequence = publisher_sequence_.load(std::memory_order::memory_order_relaxed);
     int64_t next_producer_sequence = current_producer_sequence + 1;
     int64_t wrap_point = next_producer_sequence - events_size_;
     //printf("\nCurrent seq: %" PRId64 ", next seq: %" PRId64 ", wrap_point: %" PRId64 "\n", current_producer_sequence, next_producer_sequence, wrap_point);
     // TODO(Rajiv): Combine pausing with backoff + sleep.
-    while (getConsumerSequence() <= wrap_point) {
+    if (cached_consumer_sequence_ > wrap_point) {
+      return next_producer_sequence;
+    }
+    cached_consumer_sequence_ = getConsumerSequence();
+    while (cached_consumer_sequence_ <= wrap_point) {
+    //while (getConsumerSequence() <= wrap_point) {
       _mm_pause();
+      cached_consumer_sequence_ = getConsumerSequence();
     }
     return next_producer_sequence;
   }
@@ -77,6 +84,7 @@ public:
 private:
   char cache_line_pad_1_[kCacheLineSize];
   std::atomic<int64_t> publisher_sequence_;
+  int64_t cached_consumer_sequence_;
   T events_[size];
   int64_t events_size_;
   int64_t index_mask_;
