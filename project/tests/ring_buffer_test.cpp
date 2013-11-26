@@ -84,9 +84,9 @@ static int TestConsume(processor::RingBuffer<TestEvent, RingBufferSize>* ring_bu
       auto entry = ring_buffer->get(index);
       auto num = entry->num_;
       ++num_events_processed;
+      auto arr = entry->fivechars_;
       if (num != -2) {
         //printf("\nConsumer: Received a proper entry.\n");
-        auto arr = entry->fivechars_;
         EXPECT_EQ(num, index) << "Consumer: Did not see the right value of num " << num;
         for (int i = 0; i < 5; i++) {
           EXPECT_EQ(arr[i], 'b') << "Consumer: Entry not constructed properly found " << arr[i];
@@ -96,6 +96,9 @@ static int TestConsume(processor::RingBuffer<TestEvent, RingBufferSize>* ring_bu
         // Mark events consumed and exit.
         ring_buffer->markConsumed(next_sequence);
         prev_sequence = next_sequence;
+        for (int i = 0; i < 5; i++) {
+          EXPECT_EQ(arr[i], 'c') << "Consumer: Entry not constructed properly found " << arr[i];
+        }
         goto exit_consumer;
       }
     }
@@ -126,12 +129,16 @@ TEST_F(RingBufferTest, HandlesProductionAndConsumption) {
     if (num_event == kNumEventsToGenerate - 1) {
       // Signal exit with a -2;
       entry->num_ = -2;
-    } else {
-      // Change num to 1.
-      entry->num_ = num_event;
+      // If it's the last event to generate then change the array to contain only 'c's.
       for (int i = 0; i < 5; i++) {
-        // Then change array to contain only 'b's.
-        if (arr[i] != 'b') arr[i] = 'b';
+        arr[i] = 'c';
+      }
+    } else {
+      // Change num to the the event number.
+      entry->num_ = num_event;
+      // Then change array to contain only 'b's.
+      for (int i = 0; i < 5; i++) {
+        arr[i] = 'b';
       }
     }
     // Then publish.
