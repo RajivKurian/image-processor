@@ -13,7 +13,7 @@ static const int kCacheLineSize = 64;
 
 // A simple ring buffer for single producers and single consumers.
 // Does not support parallel consumers for now.
-template<typename T, int64_t size>
+template<typename T, int64_t event_size>
 class RingBuffer {
 
 public:
@@ -21,20 +21,18 @@ public:
   RingBuffer() :
     publisher_sequence_(-1),
     cached_consumer_sequence_(-1),
-    events_size_(size),
-    index_mask_(size - 1),
     consumer_sequence_(-1) {
   }
 
   // Used to get an event for a given sequence.
   //Can be called by both the producer and consumer.
   inline T* get(int64_t sequence) {
-    return &events_[sequence & index_mask_];
+    return &events_[sequence & (event_size - 1)];  // size - 1 is the mask here.
   }
 
   // Can be called by either producer or consumer.
   inline int64_t getBufferSize() const {
-    return events_size_;
+    return event_size;
   }
 
   // Called by the producer to get the next publish slot.
@@ -42,7 +40,7 @@ public:
   int64_t nextProducerSequence() {
     int64_t current_producer_sequence = publisher_sequence_.load(std::memory_order::memory_order_relaxed);
     int64_t next_producer_sequence = current_producer_sequence + 1;
-    int64_t wrap_point = next_producer_sequence - events_size_;
+    int64_t wrap_point = next_producer_sequence - event_size;
     //printf("\nCurrent seq: %" PRId64 ", next seq: %" PRId64 ", wrap_point: %" PRId64 "\n", current_producer_sequence, next_producer_sequence, wrap_point);
     // TODO(Rajiv): Combine pausing with backoff + sleep.
     if (cached_consumer_sequence_ > wrap_point) {
@@ -84,9 +82,7 @@ private:
   char cache_line_pad_1_[kCacheLineSize];
   std::atomic<int64_t> publisher_sequence_;
   int64_t cached_consumer_sequence_;
-  T events_[size];
-  int64_t events_size_;
-  int64_t index_mask_;
+  T events_[event_size];
   char cache_line_pad_2_[kCacheLineSize];
   std::atomic<int64_t> consumer_sequence_;
   char cache_line_pad_3_[kCacheLineSize];
