@@ -24,6 +24,9 @@ public:
     consumer_sequence_(-1) {
   }
 
+  RingBuffer(const RingBuffer&) = delete;
+  RingBuffer& operator = (const RingBuffer &) = delete;
+
   // Used to get an event for a given sequence.
   //Can be called by both the producer and consumer.
   inline T* get(int64_t sequence) {

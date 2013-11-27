@@ -8,7 +8,7 @@ ADD_EXECUTABLE(${perf_main_EXECUTABLE} perf.cpp ${ring_buffer_benchmark_SRC})
 
 
 # Not needed now.
-# Clang has some problems with chrono. Compile only on GNU.
+# Older versions of Clang have some problems with chrono. Compile only on GNU.
 SET (ring_buffer_perf_SRC ring_buffer_perf.cpp)
 SET (ring_buffer_perf_EXECUTABLE ring_buffer_perf)
 IF(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")

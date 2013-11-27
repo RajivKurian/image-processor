@@ -37,8 +37,11 @@ private:
 class Buffer {
 public:
   explicit Buffer(uint32_t capacity);
-  // Disable copy constructor.
-  Buffer(const Buffer& that) = delete;
+
+  // Disable copy and assignment.
+  Buffer(const Buffer&) = delete;
+  Buffer& operator = (const Buffer &) = delete;
+
   const uint8_t* getReadPosition() const;
   uint8_t getNumBytes() const;
   // Called to resume writing to a buffer.

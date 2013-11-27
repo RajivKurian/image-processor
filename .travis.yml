@@ -12,6 +12,7 @@ script:
   - make
   - ./runUnitTests
   - perf/perf
+   -  perf/ring_buffer_perf
 
 notifications:
   recipients:
