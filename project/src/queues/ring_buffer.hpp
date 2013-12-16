@@ -21,9 +21,11 @@ public:
   RingBuffer() :
     publisher_sequence_(-1),
     cached_consumer_sequence_(-1),
+    events_(new T[event_size]),
     consumer_sequence_(-1) {
   }
 
+  // No copy constructor.
   RingBuffer(const RingBuffer&) = delete;
   RingBuffer& operator = (const RingBuffer &) = delete;
 
@@ -68,7 +70,7 @@ public:
   }
 
   // Called by the consumer to see where the producer is at.
-  inline int64_t getProducerSequence()const {
+  inline int64_t getProducerSequence() const {
     return publisher_sequence_.load(std::memory_order::memory_order_acquire);
   }
 
@@ -79,13 +81,14 @@ public:
   }
 
   ~RingBuffer() {
+    delete[] events_;
   }
 
 private:
   char cache_line_pad_1_[kCacheLineSize];
   std::atomic<int64_t> publisher_sequence_;
   int64_t cached_consumer_sequence_;
-  T events_[event_size];
+  T* events_;
   char cache_line_pad_2_[kCacheLineSize];
   std::atomic<int64_t> consumer_sequence_;
   char cache_line_pad_3_[kCacheLineSize];
