@@ -35,6 +35,10 @@ list (APPEND COMMON_INCLUDES src/queues)
 
 #ADD_SUBDIRECTORY(src/workers)
 
+# Utils.
+set (thread_utils_LIB thread_utils)
+ADD_SUBDIRECTORY(src/utils)
+list (APPEND COMMON_INCLUDES src/utils)
 
 ####################
 # Perf Testing with Hayai

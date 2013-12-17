@@ -7,7 +7,7 @@ namespace processor {
 Buffer::Buffer(uint32_t capacity) :
   capacity_(capacity),
   num_bytes_written_(0),
-  start_(new uint8_t[capacity]) {  // TODO: Shitty new, fix this.
+  start_(new uint8_t[capacity]) {
     printf("\n Created a buffer with %d capacity", capacity);
   }
 

@@ -1,5 +1,6 @@
 #include "ring_buffer.hpp"
 
+#include <iostream>
 #include <assert.h>
 
 #include <chrono>
@@ -8,15 +9,17 @@
 #include <thread>
 
 #include "colors.h"
+#include "thread_utils.hpp"
 
 static const uint32_t kRingBufferSize = 1024;
-static const int kNumEventsToGenerate = 2000000;
+static const int kNumEventsToGenerate = 20000000;
 
 template<int RingBufferSize>
 static int TestConsume(processor::RingBuffer<int, RingBufferSize>* ring_buffer) {
   using namespace std::chrono;
   typedef high_resolution_clock Clock;
 
+  //set_current_thread_affinity_and_exit_on_error(1, "Consumer set affinity failed.");
   auto t1 = Clock::now();
   int64_t prev_sequence = -1;
   int64_t next_sequence = -1;
@@ -47,7 +50,12 @@ exit_consumer:
 
 int main() {
   printf (ANSI_COLOR_BLUE "\nRingBuffer Performance Test" ANSI_COLOR_RESET "\n");
+  printf(ANSI_COLOR_GREEN "\nNumber of concurrent threads supported is %d\n" ANSI_COLOR_RESET, hardware_concurrency());
+  //set_current_thread_affinity_and_exit_on_error(0, "Producer set affinity failed.");
+
   processor::RingBuffer<int, kRingBufferSize>* ring_buffer = new processor::RingBuffer<int, kRingBufferSize>();
+  std::cout << "Size of ring buffer is " << sizeof(processor::RingBuffer<int, kRingBufferSize>) << " . Biggest aligment is " << __BIGGEST_ALIGNMENT__ << ".\n";
+
   // Start the consumer thread.
   // We must join later otherwise the application could exit while the consumer thread is still running.
   std::thread t{TestConsume<kRingBufferSize>, ring_buffer};

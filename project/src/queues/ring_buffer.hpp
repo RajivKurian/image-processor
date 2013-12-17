@@ -7,9 +7,8 @@
 #include <cinttypes>
 #include <cstdio>
 
+#define CACHE_LINE_SIZE 64
 namespace processor {
-
-static const int kCacheLineSize = 64;
 
 // A simple ring buffer for single producers and single consumers.
 // Does not support parallel consumers for now.
@@ -85,15 +84,15 @@ public:
   }
 
 private:
-  char cache_line_pad_1_[kCacheLineSize];
+  //char cache_line_pad_1_[kCacheLineSize];
   std::atomic<int64_t> publisher_sequence_;
   int64_t cached_consumer_sequence_;
   T* events_;
-  char cache_line_pad_2_[kCacheLineSize];
-  std::atomic<int64_t> consumer_sequence_;
-  char cache_line_pad_3_[kCacheLineSize];
+  //char cache_line_pad_2_[kCacheLineSize];
+  std::atomic<int64_t> consumer_sequence_ __attribute__ ((aligned (CACHE_LINE_SIZE)));
+  //char cache_line_pad_3_[kCacheLineSize];
 
-};
+} __attribute__ ((aligned(CACHE_LINE_SIZE)));
 
 }  // processor
 
