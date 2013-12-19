@@ -85,16 +85,13 @@ public:
 
 private:
 
-  //char cache_line_pad_1_[kCacheLineSize];
   std::atomic<int64_t> publisher_sequence_;
   int64_t cached_consumer_sequence_;
   T* events_;
-  //char cache_line_pad_2_[kCacheLineSize];
   // Ensure that the consumer sequence is on it's own cache line to prevent false sharing.
   std::atomic<int64_t> consumer_sequence_ __attribute__ ((aligned (CACHE_LINE_SIZE)));
-  //char cache_line_pad_3_[kCacheLineSize];
 
-} __attribute__ ((aligned(CACHE_LINE_SIZE)));
+} __attribute__ ((aligned(CACHE_LINE_SIZE)));  // Align ring buffers to cache lines.
 
 }  // processor
 
