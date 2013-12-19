@@ -12,7 +12,7 @@ namespace processor {
 
 // A simple ring buffer for single producers and single consumers.
 // Does not support parallel consumers for now.
-template<typename T, int64_t event_size>
+template<typename T, uint64_t event_size>
 class RingBuffer {
 
 public:
@@ -35,7 +35,7 @@ public:
   }
 
   // Can be called by either producer or consumer.
-  inline int64_t getBufferSize() const {
+  inline uint64_t getBufferSize() const {
     return event_size;
   }
 
@@ -46,12 +46,12 @@ public:
     int64_t next_producer_sequence = current_producer_sequence + 1;
     int64_t wrap_point = next_producer_sequence - event_size;
     //printf("\nCurrent seq: %" PRId64 ", next seq: %" PRId64 ", wrap_point: %" PRId64 "\n", current_producer_sequence, next_producer_sequence, wrap_point);
-    // TODO(Rajiv): Combine pausing with backoff + sleep.
     if (cached_consumer_sequence_ > wrap_point) {
       return next_producer_sequence;
     }
     cached_consumer_sequence_ = getConsumerSequence();
     while (cached_consumer_sequence_ <= wrap_point) {
+      // TODO(Rajiv): Combine pausing with backoff + sleep.
       _mm_pause();
       cached_consumer_sequence_ = getConsumerSequence();
     }
@@ -84,11 +84,13 @@ public:
   }
 
 private:
+
   //char cache_line_pad_1_[kCacheLineSize];
   std::atomic<int64_t> publisher_sequence_;
   int64_t cached_consumer_sequence_;
   T* events_;
   //char cache_line_pad_2_[kCacheLineSize];
+  // Ensure that the consumer sequence is on it's own cache line to prevent false sharing.
   std::atomic<int64_t> consumer_sequence_ __attribute__ ((aligned (CACHE_LINE_SIZE)));
   //char cache_line_pad_3_[kCacheLineSize];
 

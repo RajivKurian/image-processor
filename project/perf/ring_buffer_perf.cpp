@@ -11,8 +11,8 @@
 #include "colors.h"
 #include "thread_utils.hpp"
 
-static const uint32_t kRingBufferSize = 1024;
-static const int kNumEventsToGenerate = 20000000;
+static const uint64_t kRingBufferSize = 1024;
+static const int kNumEventsToGenerate = 2000000000;
 
 template<int RingBufferSize>
 static int TestConsume(processor::RingBuffer<int, RingBufferSize>* ring_buffer) {
@@ -50,11 +50,11 @@ exit_consumer:
 
 int main() {
   printf (ANSI_COLOR_BLUE "\nRingBuffer Performance Test" ANSI_COLOR_RESET "\n");
-  printf(ANSI_COLOR_GREEN "\nNumber of concurrent threads supported is %d\n" ANSI_COLOR_RESET, hardware_concurrency());
+  printf(ANSI_COLOR_GREEN "Number of concurrent threads supported is %d\n" ANSI_COLOR_RESET, hardware_concurrency());
   //set_current_thread_affinity_and_exit_on_error(0, "Producer set affinity failed.");
 
-  processor::RingBuffer<int, kRingBufferSize>* ring_buffer = new processor::RingBuffer<int, kRingBufferSize>();
-  std::cout << "Size of ring buffer is " << sizeof(processor::RingBuffer<int, kRingBufferSize>) << " . Biggest aligment is " << __BIGGEST_ALIGNMENT__ << ".\n";
+  auto ring_buffer = new processor::RingBuffer<int, kRingBufferSize>();
+  std::cout << "Size of ring buffer is " << sizeof(processor::RingBuffer<int64_t, kRingBufferSize>) << " " << sizeof(int64_t) << ". Biggest aligment is " << __BIGGEST_ALIGNMENT__ << ".\n";
 
   // Start the consumer thread.
   // We must join later otherwise the application could exit while the consumer thread is still running.
