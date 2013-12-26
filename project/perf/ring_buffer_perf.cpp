@@ -1,9 +1,12 @@
+//#include "gperftools/profiler.h"
+
 #include "ring_buffer.hpp"
 
 #include <iostream>
 #include <assert.h>
 
 #include <chrono>
+#include <cstddef>
 #include <ctime>
 #include <ratio>
 #include <thread>
@@ -12,7 +15,7 @@
 #include "thread_utils.hpp"
 
 static const uint64_t kRingBufferSize = 1024;
-static const int kNumEventsToGenerate = 2000000000;
+static const int kNumEventsToGenerate = 200000000;
 
 template<int RingBufferSize>
 static int TestConsume(processor::RingBuffer<int, RingBufferSize>* ring_buffer) {
@@ -53,11 +56,21 @@ int main() {
   printf(ANSI_COLOR_GREEN "Number of concurrent threads supported is %d\n" ANSI_COLOR_RESET, hardware_concurrency());
   //set_current_thread_affinity_and_exit_on_error(0, "Producer set affinity failed.");
 
-  auto ring_buffer = new processor::RingBuffer<int, kRingBufferSize>();
-  std::cout << "Size of ring buffer is " << sizeof(processor::RingBuffer<int64_t, kRingBufferSize>) << " " << sizeof(int64_t) << ". Biggest aligment is " << __BIGGEST_ALIGNMENT__ << ".\n";
+  // Align to a cache line.
+  void* buffer;
+  if (posix_memalign(&buffer, 64, sizeof(processor::RingBuffer<int, kRingBufferSize>)) != 0) {
+    perror("posix_memalign did not work!");
+    abort();
+  }
+
+  // Use a placement new on the aligned buffer.
+  auto ring_buffer = new (buffer) processor::RingBuffer<int, kRingBufferSize>();
+  std::cout << "Size of ring buffer is " << sizeof(processor::RingBuffer<int64_t, kRingBufferSize>) << " alignment of ring buffer " <<alignof(processor::RingBuffer<int, kRingBufferSize>) << ".\n";
+  std::cout << "Address of ring buffer is " << std::hex << ring_buffer << ". Address of ring buffer consumer sequence is " << std::hex << &(ring_buffer->consumer_sequence_) << std::endl;
 
   // Start the consumer thread.
   // We must join later otherwise the application could exit while the consumer thread is still running.
+  //ProfilerStart("/home/rajiv/cpp-projects/image-processor/build/sample.prof");
   std::thread t{TestConsume<kRingBufferSize>, ring_buffer};
 
   for (int num_event = 0; num_event < kNumEventsToGenerate; num_event ++) {
@@ -67,4 +80,5 @@ int main() {
     ring_buffer->publish(next_write_index);
   }
   t.join();
+  //ProfilerStop();
 }

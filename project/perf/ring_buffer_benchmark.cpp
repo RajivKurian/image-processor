@@ -37,7 +37,17 @@ static int TestConsume(processor::RingBuffer<int, RingBufferSize>* ring_buffer) 
 }
 
 static int TestProduce() {
-    processor::RingBuffer<int, kRingBufferSize>* ring_buffer = new processor::RingBuffer<int, kRingBufferSize>();
+
+  // Align to a cache line.
+  void* buffer;
+  if (posix_memalign(&buffer, 64, sizeof(processor::RingBuffer<int, kRingBufferSize>)) != 0) {
+    perror("posix_memalign did not work!");
+    abort();
+  }
+
+  // Use a placement new on the aligned buffer.
+  auto ring_buffer = new (buffer) processor::RingBuffer<int, kRingBufferSize>();
+
   // Start the consumer thread.
   // We must join later otherwise the application could exit while the consumer thread is still running.
   std::thread t{TestConsume<kRingBufferSize>, ring_buffer};

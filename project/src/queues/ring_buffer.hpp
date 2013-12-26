@@ -12,8 +12,11 @@ namespace processor {
 
 // A simple ring buffer for single producers and single consumers.
 // Does not support parallel consumers for now.
+
+// Align ring buffers to cache lines on stack allocations or static allocations.
+// posix_memalign or aligned_alloc still need to be used for heap allocations.
 template<typename T, uint64_t event_size>
-class RingBuffer {
+class alignas(CACHE_LINE_SIZE) RingBuffer {
 
 public:
   // Events_size must be a power of two.
@@ -83,15 +86,14 @@ public:
     delete[] events_;
   }
 
-private:
-
-  std::atomic<int64_t> publisher_sequence_;
+//private:
+  std::atomic<int64_t> publisher_sequence_ ;
   int64_t cached_consumer_sequence_;
   T* events_;
-  // Ensure that the consumer sequence is on it's own cache line to prevent false sharing.
-  std::atomic<int64_t> consumer_sequence_ __attribute__ ((aligned (CACHE_LINE_SIZE)));
+   // Ensure that the consumer sequence is on it's own cache line to prevent false sharing.
+  std::atomic<int64_t> consumer_sequence_ alignas(CACHE_LINE_SIZE); //__attribute__ ((aligned (CACHE_LINE_SIZE)));
 
-} __attribute__ ((aligned(CACHE_LINE_SIZE)));  // Align ring buffers to cache lines.
+};
 
 }  // processor
 
