@@ -56,15 +56,13 @@ int main() {
   printf(ANSI_COLOR_GREEN "Number of concurrent threads supported is %d\n" ANSI_COLOR_RESET, hardware_concurrency());
   //set_current_thread_affinity_and_exit_on_error(0, "Producer set affinity failed.");
 
-  // Align to a cache line.
-  void* buffer;
-  if (posix_memalign(&buffer, 64, sizeof(processor::RingBuffer<int, kRingBufferSize>)) != 0) {
-    perror("posix_memalign did not work!");
+  auto result = processor::RingBuffer<int, kRingBufferSize>::createAlignedRingBuffer();
+  auto ring_buffer = result.ring_buffer;
+  if (result.return_code != 0) {
+    perror("Could not create an aligned ring buffer");
     abort();
   }
 
-  // Use a placement new on the aligned buffer.
-  auto ring_buffer = new (buffer) processor::RingBuffer<int, kRingBufferSize>();
   std::cout << "Size of ring buffer is " << sizeof(processor::RingBuffer<int64_t, kRingBufferSize>) << " alignment of ring buffer " <<alignof(processor::RingBuffer<int, kRingBufferSize>) << ".\n";
   std::cout << "Address of ring buffer is " << std::hex << ring_buffer << ". Address of ring buffer consumer sequence is " << std::hex << &(ring_buffer->consumer_sequence_) << std::endl;
 

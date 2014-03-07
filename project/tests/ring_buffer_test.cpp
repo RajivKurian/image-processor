@@ -47,7 +47,12 @@ class RingBufferTest : public ::testing::Test {
   virtual void SetUp() {
     // Code here will be called immediately after the constructor (right
     // before each test).
-    ring_buffer_ = new processor::RingBuffer<TestEvent, kRingBufferSize>();
+    auto result = processor::RingBuffer<TestEvent, kRingBufferSize>::createAlignedRingBuffer();
+    if (result.return_code != 0) {
+      perror("Could not create an aligned ring buffer");
+      abort();
+    }
+    ring_buffer_ = result.ring_buffer;
   }
 
   virtual void TearDown() {

@@ -10,6 +10,17 @@
 #define CACHE_LINE_SIZE 64
 namespace processor {
 
+// Forward declare.
+template <typename T, uint64_t>
+class RingBuffer;
+
+// Struct to return aligned ring-buffer and pass on any errors.
+template<typename T, uint64_t event_size>
+struct RingBufferResult {
+  RingBuffer<T, event_size>* ring_buffer;
+  int return_code;
+};
+
 // A simple ring buffer for single producers and single consumers.
 // Does not support parallel consumers for now.
 
@@ -19,12 +30,16 @@ template<typename T, uint64_t event_size>
 class alignas(CACHE_LINE_SIZE) RingBuffer {
 
 public:
-  // Events_size must be a power of two.
-  RingBuffer() :
-    publisher_sequence_(-1),
-    cached_consumer_sequence_(-1),
-    events_(new T[event_size]),
-    consumer_sequence_(-1) {
+
+  // Create ring-buffer aligned to  a cache line.
+  static RingBufferResult<T, event_size> createAlignedRingBuffer() {
+    // TODO: Consider allocating extra memory and using std::aligned instead
+    // of using the non-standard posix_memalign.
+    void * buffer;
+    // Check and return error!
+    auto rc = posix_memalign(&buffer, CACHE_LINE_SIZE, sizeof(processor::RingBuffer<T, event_size>));
+    auto ring_buffer = new (buffer) RingBuffer<T, event_size>();
+    return RingBufferResult<T, event_size>{ring_buffer, rc};
   }
 
   // No copy constructor.
@@ -87,6 +102,14 @@ public:
   }
 
 //private:
+    // Events_size must be a power of two.
+  RingBuffer() :
+    publisher_sequence_(-1),
+    cached_consumer_sequence_(-1),
+    events_(new T[event_size]),
+    consumer_sequence_(-1) {
+  }
+
   std::atomic<int64_t> publisher_sequence_ ;
   int64_t cached_consumer_sequence_;
   T* events_;

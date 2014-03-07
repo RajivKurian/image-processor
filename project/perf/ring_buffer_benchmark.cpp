@@ -7,7 +7,7 @@
 #include "ring_buffer.hpp"
 
 static const uint32_t kRingBufferSize = 1024;
-static const int kNumEventsToGenerate = 2000000;
+static const int kNumEventsToGenerate = 20000000;
 
 template<int64_t RingBufferSize>
 static int TestConsume(processor::RingBuffer<int, RingBufferSize>* ring_buffer) {
@@ -38,15 +38,12 @@ static int TestConsume(processor::RingBuffer<int, RingBufferSize>* ring_buffer) 
 
 static int TestProduce() {
 
-  // Align to a cache line.
-  void* buffer;
-  if (posix_memalign(&buffer, 64, sizeof(processor::RingBuffer<int, kRingBufferSize>)) != 0) {
-    perror("posix_memalign did not work!");
+  auto result = processor::RingBuffer<int, kRingBufferSize>::createAlignedRingBuffer();
+  auto ring_buffer = result.ring_buffer;
+  if (result.return_code != 0) {
+    perror("Could not create an aligned ring buffer");
     abort();
   }
-
-  // Use a placement new on the aligned buffer.
-  auto ring_buffer = new (buffer) processor::RingBuffer<int, kRingBufferSize>();
 
   // Start the consumer thread.
   // We must join later otherwise the application could exit while the consumer thread is still running.
