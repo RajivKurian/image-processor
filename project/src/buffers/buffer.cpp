@@ -16,19 +16,19 @@ Buffer::~Buffer() {
   delete[] start_;
 }
 
-write_marker Buffer::getCurrentWritePosition() const {
+write_marker Buffer::getCurrentWritePosition() const noexcept {
   return write_marker{start_+ num_bytes_written_, capacity_ - num_bytes_written_};
 }
 
-uint32_t Buffer::getCapacity() const {
+uint32_t Buffer::getCapacity() const noexcept {
   return capacity_;
 }
 
-uint8_t Buffer::getNumBytes() const {
+uint8_t Buffer::getNumBytes() const noexcept {
   return num_bytes_written_;
 }
 
-bool Buffer::updateWritePosition(uint32_t num_bytes_written) {
+bool Buffer::updateWritePosition(uint32_t num_bytes_written) noexcept {
   if ((num_bytes_written_ + num_bytes_written) <= capacity_) {
     num_bytes_written_ += num_bytes_written;
     return true;
@@ -36,11 +36,11 @@ bool Buffer::updateWritePosition(uint32_t num_bytes_written) {
   return false;
 }
 
-const uint8_t* Buffer::getReadPosition() const {
+const uint8_t* Buffer::getReadPosition() const noexcept {
   return start_;
 }
 
-void Buffer::reset() {
+void Buffer::reset() noexcept {
   num_bytes_written_ = 0;
 }
 

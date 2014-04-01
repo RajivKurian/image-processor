@@ -43,13 +43,13 @@ public:
   Buffer(const Buffer&) = delete;
   Buffer& operator = (const Buffer &) = delete;
 
-  const uint8_t* getReadPosition() const;
-  uint8_t getNumBytes() const;
+  const uint8_t* getReadPosition() const noexcept;
+  uint8_t getNumBytes() const noexcept;
   // Called to resume writing to a buffer.
-  write_marker getCurrentWritePosition() const;
-  uint32_t getCapacity() const;
-  bool updateWritePosition(uint32_t num_bytes_written);
-  void reset();
+  write_marker getCurrentWritePosition() const noexcept;
+  uint32_t getCapacity() const noexcept;
+  bool updateWritePosition(uint32_t num_bytes_written) noexcept;
+  void reset() noexcept;
   ~Buffer();
 
 private:

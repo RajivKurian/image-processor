@@ -48,18 +48,18 @@ public:
 
   // Used to get an event for a given sequence.
   //Can be called by both the producer and consumer.
-  inline T* get(int64_t sequence) {
+  inline T* get(int64_t sequence) const noexcept {
     return &events_[sequence & (event_size - 1)];  // size - 1 is the mask here.
   }
 
   // Can be called by either producer or consumer.
-  inline uint64_t getBufferSize() const {
+  inline uint64_t getBufferSize() const noexcept {
     return event_size;
   }
 
   // Called by the producer to get the next publish slot.
   // Will block till there is a slot to claim.
-  int64_t nextProducerSequence() {
+  int64_t nextProducerSequence() noexcept {
     int64_t current_producer_sequence = publisher_sequence_.load(std::memory_order::memory_order_relaxed);
     int64_t next_producer_sequence = current_producer_sequence + 1;
     int64_t wrap_point = next_producer_sequence - event_size;
@@ -77,22 +77,22 @@ public:
   }
 
   // Called by the producer to see what entries the consumer is done with.
-  inline int64_t getConsumerSequence() const {
+  inline int64_t getConsumerSequence() const noexcept {
     return consumer_sequence_.load(std::memory_order::memory_order_acquire);
   }
 
   // Called by the producer after it has set the correct event entries.
-  inline void publish(int64_t sequence) {
+  inline void publish(int64_t sequence) noexcept {
     publisher_sequence_.store(sequence, std::memory_order::memory_order_release);
   }
 
   // Called by the consumer to see where the producer is at.
-  inline int64_t getProducerSequence() const {
+  inline int64_t getProducerSequence() const noexcept{
     return publisher_sequence_.load(std::memory_order::memory_order_acquire);
   }
 
   // Called by the consumer to set the latest consumed sequence.
-  inline void markConsumed(int64_t sequence) {
+  inline void markConsumed(int64_t sequence) noexcept {
     // Assert if sequence is higher than the previous one?
     consumer_sequence_.store(sequence, std::memory_order::memory_order_release);
   }

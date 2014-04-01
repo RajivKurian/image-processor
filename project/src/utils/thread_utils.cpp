@@ -20,6 +20,6 @@ void set_current_thread_affinity_and_exit_on_error(int core_number, const char* 
     handle_error_en(s, "pthread_setaffinity_np consumer");
 }
 
-int hardware_concurrency() {
+int hardware_concurrency() noexcept {
   return std::thread::hardware_concurrency();
 }
